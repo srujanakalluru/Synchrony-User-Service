@@ -1,0 +1,18 @@
+version: "1"
+client: src/**/java/com/**/client/**/*.java
+config: src/**/java/com/**/configuration/**/*.java
+controller: src/**/java/com/**/controller/**/*.java
+dto: src/**/java/com/**/dto/**/*.java
+entity: src/**/java/com/**/entity/**/*.java
+errorhandling: src/**/java/com/**/errorhandling/**/*.java
+filter: src/**/java/com/**/filter/**/*.java
+logging: src/**/java/com/**/logging/**/*.java
+repository: src/**/java/com/**/repository/**/*.java
+cache: src/**/java/com/**/cache/**/*.java
+service: src/**/java/com/**/service/**/*.java
+utils: src/**/java/com/**/utils/**/*.java
+resources: src/**/resources/**/*.*
+workflow: .github/**/*.*
+docker: docker-compose.yml, Dockerfile
+maven: pom.xml
+readme: README.md
