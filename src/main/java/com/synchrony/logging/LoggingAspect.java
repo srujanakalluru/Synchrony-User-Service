@@ -16,6 +16,7 @@ import static com.synchrony.logging.LoggingBean.ApiType.CACHE;
 import static com.synchrony.logging.LoggingBean.ApiType.CONTROLLER;
 import static com.synchrony.logging.LoggingBean.ApiType.ERROR;
 import static com.synchrony.logging.LoggingBean.ApiType.EXTERNAL;
+import static com.synchrony.logging.LoggingBean.ApiType.KAFKA;
 import static com.synchrony.logging.LoggingBean.ApiType.REPOSITORY;
 import static com.synchrony.logging.LoggingBean.ApiType.SERVICE;
 
@@ -43,9 +44,17 @@ public class LoggingAspect {
     }
 
     /**
+     * Pointcut for kafka
+     */
+    @Pointcut("execution(* com.synchrony.service..Kafka*.*(..))")
+    public void kafkaPointCut() {
+        // Method is empty as this is just a Pointcut
+    }
+
+    /**
      * Pointcut for service
      */
-    @Pointcut("execution(* com.synchrony.service..*(..))")
+    @Pointcut("execution(* com.synchrony.service..*(..)) && !execution(* com.synchrony.service..Kafka*.*(..))")
     public void servicePointCut() {
         // Method is empty as this is just a Pointcut
     }
@@ -82,6 +91,15 @@ public class LoggingAspect {
     @Around("servicePointCut()")
     public Object logAroundService(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         return logAroundBean(proceedingJoinPoint, SERVICE);
+    }
+
+    /**
+     * @param proceedingJoinPoint proceedingJoinPoint
+     * @throws Throwable throwable
+     */
+    @Around("kafkaPointCut()")
+    public Object logAroundKafka(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        return logAroundBean(proceedingJoinPoint, KAFKA);
     }
 
     /**

@@ -1,4 +1,4 @@
-name: Codacy Security Scan
+name: Labeler
 on:
   pull_request:
     branches: [ "master","main" ]

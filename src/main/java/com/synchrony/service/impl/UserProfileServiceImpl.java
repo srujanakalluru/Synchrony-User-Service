@@ -8,6 +8,7 @@ import com.synchrony.entity.UserProfile;
 import com.synchrony.errorhandling.SynchronyApplicationException;
 import com.synchrony.repository.ImageRepository;
 import com.synchrony.repository.UserProfileRepository;
+import com.synchrony.service.KafkaProducerService;
 import com.synchrony.service.UserProfileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +30,17 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final UserProfileRepository userProfileRepository;
     private final ImageRepository imageRepository;
     private final UsersCache usersCache;
+    private final KafkaProducerService kafkaProducerService;
+
 
     @Autowired
     public UserProfileServiceImpl(ImgurApi imgurApi,
-                                  UserProfileRepository userProfileRepository, ImageRepository imageRepository, UsersCache usersCache) {
+                                  UserProfileRepository userProfileRepository, ImageRepository imageRepository, UsersCache usersCache, KafkaProducerService kafkaProducerService) {
         this.imgurApi = imgurApi;
         this.userProfileRepository = userProfileRepository;
         this.imageRepository = imageRepository;
         this.usersCache = usersCache;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     private User getCurrentUser() {
@@ -54,10 +58,14 @@ public class UserProfileServiceImpl implements UserProfileService {
         UserProfile userProfile = user.getUserProfile();
 
         Image image = imgurApi.uploadImage(imageFile, title).getImage();
+
         image.setUserProfile(userProfile);
         userProfile.getImages().add(image);
         userProfileRepository.save(userProfile);
         imageRepository.save(image);
+
+        kafkaProducerService.sendMessage(user.getUsername(), title);
+
         return image;
     }
 
