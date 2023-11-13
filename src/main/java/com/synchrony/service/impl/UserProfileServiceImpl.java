@@ -48,12 +48,12 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public Image uploadImage(MultipartFile imageFile) throws IOException {
+    public Image uploadImage(MultipartFile imageFile, String title) throws IOException {
 
         User user = getCurrentUser();
         UserProfile userProfile = user.getUserProfile();
 
-        Image image = imgurApi.uploadImage(imageFile).getImage();
+        Image image = imgurApi.uploadImage(imageFile, title).getImage();
         image.setUserProfile(userProfile);
         userProfile.getImages().add(image);
         userProfileRepository.save(userProfile);

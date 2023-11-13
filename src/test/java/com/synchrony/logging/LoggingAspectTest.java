@@ -28,6 +28,15 @@ class LoggingAspectTest {
     private ProceedingJoinPoint proceedingJoinPoint;
 
     @Test
+    void assertNoErrors() {
+        assertDoesNotThrow(()->loggingAspect.cachePointCut());
+        assertDoesNotThrow(()->loggingAspect.controllerPointCut());
+        assertDoesNotThrow(()->loggingAspect.externalServicePointCut());
+        assertDoesNotThrow(()->loggingAspect.servicePointCut());
+        assertDoesNotThrow(()->loggingAspect.repositoryPointCut());
+    }
+
+    @Test
     void logAroundController() throws Throwable {
         setUpCommonMockBehavior();
         Object result = loggingAspect.logAroundController(proceedingJoinPoint);
@@ -56,6 +65,13 @@ class LoggingAspectTest {
     }
 
     @Test
+    void logAroundExternalService() throws Throwable {
+        setUpCommonMockBehavior();
+        Object result = loggingAspect.logAroundExternalService(proceedingJoinPoint);
+        verifyCommonMockBehavior(result);
+    }
+
+    @Test
     void logAroundBean() throws Throwable {
         setUpCommonMockBehavior();
         Object result = loggingAspect.logAroundBean(proceedingJoinPoint, LoggingBean.ApiType.EXTERNAL);
@@ -70,6 +86,26 @@ class LoggingAspectTest {
         Throwable ex = new RuntimeException("Test exception");
         assertDoesNotThrow(()->loggingAspect.logAfterThrowingExceptionCall(joinPoint, ex));
     }
+
+    @Test
+    void logAfterThrowingExceptionCallWithCause() {
+        JoinPoint joinPoint = mock(JoinPoint.class);
+        when(joinPoint.getTarget()).thenReturn(new Object());
+        when(joinPoint.getSignature()).thenReturn(codeSignature);
+        Throwable cause = new RuntimeException("Cause exception");
+        Throwable ex = new RuntimeException(null, cause);
+        assertDoesNotThrow(() -> loggingAspect.logAfterThrowingExceptionCall(joinPoint, ex));
+    }
+
+    @Test
+    void logAfterThrowingExceptionCallWithoutCause() {
+        JoinPoint joinPoint = mock(JoinPoint.class);
+        when(joinPoint.getTarget()).thenReturn(new Object());
+        when(joinPoint.getSignature()).thenReturn(codeSignature);
+        Throwable ex = new StackOverflowError(null);
+        assertDoesNotThrow(() -> loggingAspect.logAfterThrowingExceptionCall(joinPoint, ex));
+    }
+
 
     private void setUpCommonMockBehavior() throws Throwable {
         when(proceedingJoinPoint.proceed()).thenReturn("result");
