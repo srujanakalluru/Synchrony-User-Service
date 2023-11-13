@@ -2,6 +2,7 @@ package com.synchrony.service.impl;
 
 import com.synchrony.cache.UsersCache;
 import com.synchrony.client.ImgurApi;
+import com.synchrony.dto.UserProfileDTO;
 import com.synchrony.entity.Image;
 import com.synchrony.entity.User;
 import com.synchrony.entity.UserProfile;
@@ -87,6 +88,18 @@ public class UserProfileServiceImpl implements UserProfileService {
         userProfile.getImages().remove(imageToDelete);
         imageRepository.delete(imageToDelete);
         userProfileRepository.save(userProfile);
+    }
+
+    @Override
+    public UserProfileDTO getUserProfileDetails() {
+        User user = getCurrentUser();
+        UserProfile userProfile = user.getUserProfile();
+        List<Image> images = userProfile.getImages();
+
+        return UserProfileDTO.builder()
+                .firstName(userProfile.getFirstName())
+                .lastName(userProfile.getLastName())
+                .imageList(images).build();
     }
 
 }

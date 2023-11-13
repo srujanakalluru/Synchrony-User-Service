@@ -1,5 +1,6 @@
 package com.synchrony.service;
 
+import com.synchrony.dto.UserProfileDTO;
 import com.synchrony.entity.Image;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,4 +11,5 @@ public interface UserProfileService {
 
     void deleteImage(String deleteHash);
 
+    UserProfileDTO getUserProfileDetails();
 }
