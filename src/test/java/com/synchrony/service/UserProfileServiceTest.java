@@ -3,6 +3,7 @@ package com.synchrony.service;
 import com.synchrony.cache.UsersCache;
 import com.synchrony.client.ImgurApi;
 import com.synchrony.dto.ImgurUploadResponse;
+import com.synchrony.dto.UserProfileDTO;
 import com.synchrony.entity.Image;
 import com.synchrony.entity.User;
 import com.synchrony.entity.UserProfile;
@@ -26,12 +27,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.synchrony.utils.Constants.IMAGE_NOT_FOUND_FOR_THE_USER;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -68,6 +71,33 @@ class UserProfileServiceTest {
         GrantedAuthority authority = new SimpleGrantedAuthority("USER");
         Authentication authentication = new UsernamePasswordAuthenticationToken("testUsername", "testPassword", Collections.singleton(authority));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    @Test
+    void testGetUserProfileDetails() {
+        User user = new User();
+        user.setId(1L);
+
+        UserProfile userProfile = new UserProfile();
+        userProfile.setFirstName("John");
+        userProfile.setLastName("Doe");
+
+        Image image1 = new Image();
+        image1.setId("abc");
+        Image image2 = new Image();
+        image2.setId("xyz");
+        List<Image> images = Arrays.asList(image1, image2);
+        userProfile.setImages(images);
+
+        user.setUserProfile(userProfile);
+        when(usersCache.findByUsername(anyString())).thenReturn(Optional.of(user));
+
+        UserProfileDTO result = userProfileService.getUserProfileDetails();
+
+        verify(usersCache, times(1)).findByUsername(anyString());
+        assertEquals("John", result.getFirstName());
+        assertEquals("Doe", result.getLastName());
+        assertEquals(images, result.getImageList());
     }
 
     @Test

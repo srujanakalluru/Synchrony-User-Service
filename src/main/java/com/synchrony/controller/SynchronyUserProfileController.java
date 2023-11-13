@@ -1,5 +1,6 @@
 package com.synchrony.controller;
 
+import com.synchrony.dto.UserProfileDTO;
 import com.synchrony.entity.Image;
 import com.synchrony.service.UserProfileService;
 import io.swagger.annotations.ApiOperation;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,15 @@ public class SynchronyUserProfileController {
     @Autowired
     public SynchronyUserProfileController(UserProfileService userProfileService) {
         this.userProfileService = userProfileService;
+    }
+
+    @ApiOperation(value = "getProfileDetails", nickname = "getProfileDetails", notes = "", response = Image.class, tags = {"Synchrony User Profile Controller",})
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping()
+    public ResponseEntity<UserProfileDTO> getProfileDetails() {
+        UserProfileDTO userProfileDTO = userProfileService.getUserProfileDetails();
+        return new ResponseEntity<>(userProfileDTO, HttpStatus.OK);
+
     }
 
     @ApiOperation(value = "uploadImage", nickname = "uploadImage", notes = "", response = Image.class, tags = {"Synchrony User Profile Controller",})
