@@ -63,6 +63,9 @@ class UserProfileServiceTest {
     @Mock
     private UsersCache usersCache;
 
+    @Mock
+    private KafkaProducerService kafkaProducerService;
+
     @InjectMocks
     private UserProfileServiceImpl userProfileService;
 
@@ -108,11 +111,13 @@ class UserProfileServiceTest {
         Image mockImage = mock(Image.class);
         ImgurUploadResponse imgurUploadResponse = mock(ImgurUploadResponse.class);
 
+        when(mockUser.getUsername()).thenReturn("test-user");
         when(usersCache.findByUsername(anyString())).thenReturn(Optional.of(mockUser));
         when(mockUser.getUserProfile()).thenReturn(mockUserProfile);
         when(imgurUploadResponse.getImage()).thenReturn(mockImage);
         when(imgurApi.uploadImage(mockImageFile, TITLE)).thenReturn(imgurUploadResponse);
         when(imageRepository.save(mockImage)).thenReturn(mockImage);
+        doNothing().when(kafkaProducerService).sendMessage(anyString(), anyString());
 
         Image result = userProfileService.uploadImage(mockImageFile, TITLE);
 
@@ -120,6 +125,7 @@ class UserProfileServiceTest {
         verify(usersCache, times(1)).findByUsername(anyString());
         verify(imgurApi, times(1)).uploadImage(mockImageFile, TITLE);
         verify(imageRepository, times(1)).save(mockImage);
+        verify(kafkaProducerService, times(1)).sendMessage(anyString(), anyString());
     }
 
     @Test
@@ -131,6 +137,7 @@ class UserProfileServiceTest {
         assertThrows(SynchronyApplicationException.class, () -> userProfileService.uploadImage(mockImageFile, TITLE));
         verify(imgurApi, never()).uploadImage(any(), anyString());
         verify(imageRepository, never()).save(any());
+        verify(kafkaProducerService, never()).sendMessage(anyString(), anyString());
     }
 
     @Test
@@ -172,13 +179,10 @@ class UserProfileServiceTest {
 
         when(usersCache.findByUsername("testUser")).thenReturn(Optional.of(user));
         String deleteHash = "nonexistentHash";
-        SynchronyApplicationException exception = assertThrows(SynchronyApplicationException.class, () -> {
-            userProfileService.deleteImage(deleteHash);
-        });
+        SynchronyApplicationException exception = assertThrows(SynchronyApplicationException.class, () -> userProfileService.deleteImage(deleteHash));
 
         String expectedErrorMessage = String.format(IMAGE_NOT_FOUND_FOR_THE_USER, deleteHash, "testUser");
         assert (expectedErrorMessage.equals(exception.getMessage()));
     }
-
 
 }
