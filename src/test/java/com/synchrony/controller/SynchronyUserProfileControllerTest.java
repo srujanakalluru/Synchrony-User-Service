@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SynchronyUserProfileControllerTest {
+    private static final String TITLE = "test-title";
 
     @Mock
     private UserProfileService userProfileService;
@@ -33,10 +34,10 @@ class SynchronyUserProfileControllerTest {
         MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg", "test data".getBytes());
         Image testImage = new Image();
 
-        when(userProfileService.uploadImage(file)).thenReturn(testImage);
-        ResponseEntity<Image> response = userProfileController.uploadImage(file);
+        when(userProfileService.uploadImage(file, TITLE)).thenReturn(testImage);
+        ResponseEntity<Image> response = userProfileController.uploadImage(file, TITLE);
 
-        verify(userProfileService, times(1)).uploadImage(file);
+        verify(userProfileService, times(1)).uploadImage(file, TITLE);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(testImage, response.getBody());
     }

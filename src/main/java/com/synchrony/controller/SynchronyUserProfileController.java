@@ -37,8 +37,9 @@ public class SynchronyUserProfileController {
     @ApiOperation(value = "uploadImage", nickname = "uploadImage", notes = "", response = Image.class, tags = {"Synchrony User Profile Controller",})
     @PreAuthorize("hasRole('USER')")
     @PostMapping(value = "images", consumes = "multipart/form-data")
-    public ResponseEntity<Image> uploadImage(@Valid @RequestPart(name = "file") @NotNull(message = "File cannot be empty") MultipartFile file) throws IOException {
-        Image image = userProfileService.uploadImage(file);
+    public ResponseEntity<Image> uploadImage(@Valid @RequestPart(name = "file") @NotNull(message = "File cannot be empty") MultipartFile file,
+                                             @RequestPart(name = "title") String title) throws IOException {
+        Image image = userProfileService.uploadImage(file, title);
         return new ResponseEntity<>(image, HttpStatus.CREATED);
     }
 

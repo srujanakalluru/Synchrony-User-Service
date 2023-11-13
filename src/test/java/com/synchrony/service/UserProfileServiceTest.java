@@ -46,6 +46,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserProfileServiceTest {
+    private static final String TITLE = "test-title";
 
     @Mock
     private ImgurApi imgurApi;
@@ -80,14 +81,14 @@ class UserProfileServiceTest {
         when(usersCache.findByUsername(anyString())).thenReturn(Optional.of(mockUser));
         when(mockUser.getUserProfile()).thenReturn(mockUserProfile);
         when(imgurUploadResponse.getImage()).thenReturn(mockImage);
-        when(imgurApi.uploadImage(mockImageFile)).thenReturn(imgurUploadResponse);
+        when(imgurApi.uploadImage(mockImageFile, TITLE)).thenReturn(imgurUploadResponse);
         when(imageRepository.save(mockImage)).thenReturn(mockImage);
 
-        Image result = userProfileService.uploadImage(mockImageFile);
+        Image result = userProfileService.uploadImage(mockImageFile, TITLE);
 
         assertNotNull(result);
         verify(usersCache, times(1)).findByUsername(anyString());
-        verify(imgurApi, times(1)).uploadImage(mockImageFile);
+        verify(imgurApi, times(1)).uploadImage(mockImageFile, TITLE);
         verify(imageRepository, times(1)).save(mockImage);
     }
 
@@ -97,8 +98,8 @@ class UserProfileServiceTest {
 
         when(usersCache.findByUsername(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(SynchronyApplicationException.class, () -> userProfileService.uploadImage(mockImageFile));
-        verify(imgurApi, never()).uploadImage(any());
+        assertThrows(SynchronyApplicationException.class, () -> userProfileService.uploadImage(mockImageFile, TITLE));
+        verify(imgurApi, never()).uploadImage(any(), anyString());
         verify(imageRepository, never()).save(any());
     }
 

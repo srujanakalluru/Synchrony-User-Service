@@ -27,6 +27,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ImgurApiTest {
+    private static final String TITLE = "test-title";
+
 
     @Mock
     private RestTemplate imgurRestTemplate;
@@ -45,7 +47,7 @@ class ImgurApiTest {
         when(imgurRestTemplate.exchange(any(URI.class), eq(HttpMethod.POST), any(HttpEntity.class), eq(ImgurUploadResponse.class)))
                 .thenReturn(responseEntity);
 
-        ImgurUploadResponse result = imgurApi.uploadImage(file);
+        ImgurUploadResponse result = imgurApi.uploadImage(file, TITLE);
 
         assertEquals(expectedResponse, result);
     }
@@ -59,7 +61,7 @@ class ImgurApiTest {
         when(imgurRestTemplate.exchange(any(URI.class), eq(HttpMethod.POST), any(HttpEntity.class), eq(ImgurUploadResponse.class)))
                 .thenReturn(responseEntity);
 
-        assertThrows(SynchronyApplicationException.class, () -> imgurApi.uploadImage(file));
+        assertThrows(SynchronyApplicationException.class, () -> imgurApi.uploadImage(file, TITLE));
     }
 
     @Test

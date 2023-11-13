@@ -44,6 +44,7 @@ public class SecurityConfig {
         http.headers().frameOptions().disable();
         return http.build();
     }
+
     @Bean
     public Filter authenticationFilter(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return new UserAuthenticationFilter(authenticationManagerBean(authenticationConfiguration));

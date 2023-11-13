@@ -31,14 +31,15 @@ public class ImgurApi {
         this.imgurRestTemplate = imgurRestTemplate;
     }
 
-    public ImgurUploadResponse uploadImage(MultipartFile imageFile) throws IOException {
+    public ImgurUploadResponse uploadImage(MultipartFile imageFile, String title) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "multipart/form-data; boundary=--------------------------678213828057108133520148");
 
-        MultiValueMap<String, ByteArrayResource> body = new LinkedMultiValueMap<>();
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("image", new ByteArrayResource(imageFile.getBytes(), imageFile.getOriginalFilename()));
+        body.add("title", title);
 
-        HttpEntity<MultiValueMap<String, ByteArrayResource>> requestEntity = new HttpEntity<>(body, headers);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
         ResponseEntity<ImgurUploadResponse> response = imgurRestTemplate.exchange(buildUploadImageUri(), HttpMethod.POST, requestEntity, ImgurUploadResponse.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {

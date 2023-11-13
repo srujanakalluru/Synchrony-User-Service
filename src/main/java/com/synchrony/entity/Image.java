@@ -18,6 +18,7 @@ import java.io.Serializable;
 public class Image implements Serializable {
     @Id
     private String id;
+    private String title;
     private String type;
     @JsonProperty("deletehash")
     private String imageHash;
