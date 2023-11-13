@@ -56,6 +56,6 @@ public class LoggingBean {
 
     @Getter
     public enum ApiType {
-        EXTERNAL, CONTROLLER, SERVICE, REPOSITORY, ERROR, CACHE
+        EXTERNAL, CONTROLLER, SERVICE, REPOSITORY, ERROR, CACHE, KAFKA
     }
 }

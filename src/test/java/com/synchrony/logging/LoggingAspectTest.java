@@ -30,6 +30,7 @@ class LoggingAspectTest {
     @Test
     void assertNoErrors() {
         assertDoesNotThrow(()->loggingAspect.cachePointCut());
+        assertDoesNotThrow(()->loggingAspect.kafkaPointCut());
         assertDoesNotThrow(()->loggingAspect.controllerPointCut());
         assertDoesNotThrow(()->loggingAspect.externalServicePointCut());
         assertDoesNotThrow(()->loggingAspect.servicePointCut());
