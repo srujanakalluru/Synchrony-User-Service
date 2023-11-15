@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -52,7 +51,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 
     @Override
-    @Transactional
     public Image uploadImage(MultipartFile imageFile, String title) throws IOException {
 
         User user = getCurrentUser();
@@ -71,7 +69,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    @Transactional
     public void deleteImage(String deleteHash) {
         User user = getCurrentUser();
         UserProfile userProfile = user.getUserProfile();

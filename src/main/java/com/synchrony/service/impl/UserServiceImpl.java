@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 
 @Service
@@ -41,7 +40,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username).isPresent();
     }
 
-    @Transactional
     public void registerUser(SignupRequest signupRequest) {
         if (existsByUsername(signupRequest.getUsername())) {
             throw new SynchronyApplicationException("Username is already taken");
